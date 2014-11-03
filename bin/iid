@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+use v5.18;
+
+use FindBin;
+use lib "$FindBin::Bin../lib";
+
+use Iid::Index;
+use Iid::PlackApp;
+
+use Getopt::Std;
+
+getopts("l:c:", \(my %opts));
+
+$opts{d} ||= "/tmp/iid-$$";     # a directory for storing index.
+$opts{l} ||= "localhost:16324"; # listen host:port
+
+my $iid_index = Iid::Index->new( directory => $opts{d} );
+
+my $app = Iid::PlackApp->new( index => $iid_index )->plackapperize;
