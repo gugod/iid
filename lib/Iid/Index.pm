@@ -1,9 +1,13 @@
 use v5.18;
 package Iid::Index {
     use Mo qw'default';
+    use File::Spec::Functions qw'catfile';
+    use Sereal::Encoder;
+    
     has 'name';
     has 'directory';
     has kv => ( default => sub { {} } );
+
     sub add {
         my ($self, $id, $terms) = @_;
         for my $term (@$terms) {
@@ -17,6 +21,16 @@ package Iid::Index {
             }
         }
         return 1;
+    }
+
+    sub save {
+        my $self = shift;
+        my $index_file = catfile($self->directory, $self->name . ".sereal");
+        my $sereal = Sereal::Encoder->new;
+        open my $fh, ">", $index_file;
+        print $fh $sereal->encode($self->kv);
+        close $fh;
+        return $self;
     }
 };
 1;

@@ -9,11 +9,10 @@ use Iid::PlackApp;
 
 use Getopt::Std;
 
-getopts("l:c:", \(my %opts));
+getopts("c:", \(my %opts));
 
-$opts{d} ||= "/tmp/iid-$$";     # a directory for storing index.
-$opts{l} ||= "localhost:16324"; # listen host:port
+$opts{d} ||= "/tmp/iid";        # a directory for storing index.
 
-my $iid_index = Iid::Index->new( directory => $opts{d} );
+mkdir($opts{d}) unless -d "$opts{d}";
 
-my $app = Iid::PlackApp->new( index => $iid_index )->plackapperize;
+my $app = Iid::PlackApp->new( directory => $opts{d} )->plackapperize;
