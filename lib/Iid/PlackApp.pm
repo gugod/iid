@@ -37,6 +37,8 @@ package Iid::PlackApp {
                 next unless $doc->{id} && $doc->{tokens} && !ref($doc->{id}) && ref($doc->{tokens}) eq 'ARRAY';
                 $index->add( $doc->{id}, $doc->{tokens} );
             }            
+        } elsif ($doc->{action} eq "load") {
+            $index->load;
         } elsif ($doc->{action} eq "save") {
             $index->save;
         }

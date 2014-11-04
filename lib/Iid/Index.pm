@@ -3,7 +3,8 @@ package Iid::Index {
     use Mo qw'default';
     use File::Spec::Functions qw'catfile';
     use Sereal::Encoder;
-    
+    use Sereal::Decoder;
+
     has 'name';
     has 'directory';
     has kv => ( default => sub { {} } );
@@ -23,11 +24,25 @@ package Iid::Index {
         return 1;
     }
 
+    sub _index_file {
+        my $self = shift;
+        return catfile($self->directory, $self->name . ".sereal");
+    }
+
+    sub load {
+        my $self = shift;
+        my $sereal = Sereal::Decoder->new;
+        open my $fh, "<", $self->_index_file;
+        local $/ = undef;
+        $self->kv( $sereal->decode(<$fh>) );
+        close($fh);
+        return $self;
+    }
+
     sub save {
         my $self = shift;
-        my $index_file = catfile($self->directory, $self->name . ".sereal");
         my $sereal = Sereal::Encoder->new;
-        open my $fh, ">", $index_file;
+        open my $fh, ">", $self->_index_file;
         print $fh $sereal->encode($self->kv);
         close $fh;
         return $self;

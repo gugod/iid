@@ -3,6 +3,12 @@
 
 plackup -Ilib bin/iid
 
+## load the index
+
+```
+curl -XPOST http://localhost:5000/stuff/ -d '{"action":"load"}'
+```
+
 ## adding documents to an index
 
 ```
