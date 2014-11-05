@@ -31,7 +31,7 @@ package Iid::PlackApp {
         }
         my $doc = JSON::decode_json($body);
 
-        my $index = $self->index_pool->{$index_name} ||= Iid::Index->new( name => $index_name, directory => $self->directory );
+        my $index = $self->index_pool->{$index_name} ||= Iid::Index->new( name => $index_name, directory => $self->directory )->load;
         if ($doc->{action} eq "index") {
             for my $doc (@{$doc->{documents}}) {
                 next unless $doc->{id} && $doc->{tokens} && !ref($doc->{id}) && ref($doc->{tokens}) eq 'ARRAY';
