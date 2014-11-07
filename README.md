@@ -1,9 +1,11 @@
 
 ## run
 
-plackup -Ilib bin/iid
+    IID_INDEX_DIRECTORY=/db/iid plackup -Ilib bin/iid
 
-## load the index
+It is mandatory to set `IID_INDEX_DIRECTORY` to a existing directory.
+
+## reload the index from file.
 
 ```
 curl -XPOST http://localhost:5000/stuff/ -d '{"action":"load"}'
