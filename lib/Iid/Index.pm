@@ -31,11 +31,16 @@ package Iid::Index {
 
     sub load {
         my $self = shift;
-        my $sereal = Sereal::Decoder->new;
-        open my $fh, "<", $self->_index_file;
-        local $/ = undef;
-        $self->kv( $sereal->decode(<$fh>) );
-        close($fh);
+        if (-f $self->_index_file) {
+            local $/ = undef;
+            my $sereal = Sereal::Decoder->new;
+            open my $fh, "<", $self->_index_file;
+            my $x = <$fh>;
+            close($fh);
+            $self->kv( $sereal->decode($x) );
+        } else {
+            $self->kv({});
+        }
         return $self;
     }
 
