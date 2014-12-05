@@ -31,6 +31,7 @@ package Iid::Index {
 
     sub load {
         my $self = shift;
+        return $self unless -f $self->_index_file;
         my $sereal = Sereal::Decoder->new;
         open my $fh, "<", $self->_index_file;
         local $/ = undef;
