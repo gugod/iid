@@ -9,17 +9,35 @@ package Iid::Index {
     has 'directory';
     has kv => ( default => sub { {} } );
 
+    sub _insert {
+        my ($arr, $v) = @_;
+        if (@$arr == 0) {
+            push(@$arr, $v);
+            return 1;
+        }
+        my ($min, $max) = (0, $#$arr+1);
+        my $i = int(($max+$min)/2);
+        my $step = $i;
+        while ($min+1 < $max) {
+            if ($v eq $arr->[$i]) {
+                return;
+            } elsif ($v lt $arr->[$i]) {
+                $max = $i;
+            } else {
+                $min = $i;
+            }
+            $i = int(($max+$min)/2);
+        }
+        @{$arr}[$min..$#$arr+1] = (@{$arr}[$min .. $i], $v, @{$arr}[$i+1..$#$arr]);
+        return 1;
+    }
+
     sub add {
         my ($self, $id, $terms) = @_;
         for my $term (@$terms) {
-            my $t = $self->kv->{terms}{$term} //= {tf=>0,docs=>[]};
-            my $n = @{$t->{docs}};
-            my $i = 0;
-            while ( $i < $n && $t->{docs}[$i] lt $id ) { $i++ };
-            unless (defined($t->{docs}[$i]) && $t->{docs}[$i] eq $id) {
-                $t->{tf}++;
-                @{$t->{docs}}[ $i .. $n ] = ($id, @{$t->{docs}}[ $i .. $n-1 ]);
-            }
+            my $t = $self->kv->{terms}{$term} //= {df=>0,tf=>0,docs=>[]};
+            $t->{tf}++;
+            $t->{df}++ if _insert($t->{docs}, $id);
         }
         return 1;
     }
