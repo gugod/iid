@@ -7,12 +7,7 @@ use lib "$FindBin::Bin../lib";
 use Iid::Index;
 use Iid::PlackApp;
 
-use Getopt::Std;
+my $index_directory = $ENV{IID_INDEX_DIRECTORY} // die "set IID_INDEX_DIRECTORY to a dir..";
+die "IID_INDEX_DIRECTORY is not a dir"  unless -d $index_directory;
 
-getopts("c:", \(my %opts));
-
-$opts{d} ||= "/tmp/iid";        # a directory for storing index.
-
-mkdir($opts{d}) unless -d "$opts{d}";
-
-my $app = Iid::PlackApp->new( directory => $opts{d} )->plackapperize;
+my $app = Iid::PlackApp->new( directory => $index_directory )->plackapperize;
